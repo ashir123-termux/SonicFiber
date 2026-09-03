@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SONIC FIBER</title>
+<style>
+:root{--primary:#e11d48;--dark:#0f172a;--card:#fff;--bg:#f5f7fb;--muted:#64748b;--gold:#f59e0b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--dark)}
+header{background:linear-gradient(135deg,#111827,#e11d48);color:#fff;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.brand{font-size:23px;font-weight:800}.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--primary);color:#fff}.btn.dark{background:#111827;color:#fff}.btn.light{background:#fff;color:#111827}
+main{max-width:1150px;margin:auto;padding:25px 16px}.hero{background:#fff;border-radius:24px;padding:30px;box-shadow:0 8px 30px #0000000d;margin-bottom:22px}
+.hero h1{font-size:clamp(30px,6vw,52px);margin:5px 0 10px}.hero p{color:var(--muted);font-size:17px}
+.badges{display:flex;gap:10px;flex-wrap:wrap}.badge{background:#fff0f3;color:#be123c;padding:8px 12px;border-radius:99px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.card{background:var(--card);padding:20px;border-radius:20px;box-shadow:0 8px 25px #0000000b}.price{font-size:30px;font-weight:800}.muted{color:var(--muted)}.pro{border:2px solid var(--gold);position:relative}.pro:before{content:"PRO";position:absolute;right:15px;top:15px;background:var(--gold);color:#fff;padding:5px 9px;border-radius:99px;font-size:12px;font-weight:800}
+section{margin:28px 0}h2{margin-bottom:14px}.benefit{padding:14px;background:#f8fafc;border-radius:14px;margin:8px 0}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.box{background:#fff;border-radius:20px;padding:24px;width:min(460px,100%);max-height:90vh;overflow:auto}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:6px 0 12px;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.danger{background:#fee2e2;color:#991b1b}.notice{background:#fff7ed;border-left:4px solid #f59e0b;padding:12px;border-radius:8px}
+footer{background:#111827;color:#cbd5e1;padding:30px 5%;text-align:center;margin-top:40px}
+.small{font-size:13px}.hidden{display:none!important}.adminbar{background:#fff;border-radius:20px;padding:20px;margin-bottom:20px}
+.plan-actions{display:flex;gap:8px;margin-top:12px}
+
+#chatbot{position:fixed;right:18px;bottom:18px;z-index:30}.chat-toggle{width:56px;height:56px;border:0;border-radius:50%;background:#e11d48;color:#fff;font-size:24px;box-shadow:0 8px 25px #0004;cursor:pointer}.chat-box{position:absolute;right:0;bottom:68px;width:320px;background:#fff;border-radius:18px;box-shadow:0 12px 40px #0003;overflow:hidden}.chat-head{background:#111827;color:#fff;padding:13px 15px;display:flex;justify-content:space-between}.chat-head button{background:none;border:0;color:#fff;font-size:22px;cursor:pointer}.chat-messages{height:220px;overflow:auto;padding:12px;background:#f8fafc}.bot-msg,.user-msg{padding:9px 11px;border-radius:12px;margin:7px 0;max-width:88%;font-size:14px}.bot-msg{background:#e2e8f0}.user-msg{background:#ffe4e6;margin-left:auto}.chat-quick{padding:8px;display:flex;gap:5px;flex-wrap:wrap}.chat-quick button{border:1px solid #cbd5e1;background:#fff;border-radius:20px;padding:6px 9px;cursor:pointer}.chat-input{display:flex;padding:9px;border-top:1px solid #e2e8f0;gap:6px}.chat-input input{margin:0}.chat-input button{border:0;background:#e11d48;color:#fff;border-radius:9px;padding:0 12px;font-weight:700}
+
+.theme-white{--primary:#2563eb;--dark:#111827;--bg:#f5f7fb;--card:#fff;--muted:#64748b;--gold:#d4a72c}
+.theme-black{--primary:#e11d48;--dark:#ffffff;--bg:#080808;--card:#151515;--muted:#b3b3b3;--gold:#d4a72c}
+.theme-gold{--primary:#b8860b;--dark:#211a0b;--bg:#f8f3e5;--card:#fffdf7;--muted:#766b55;--gold:#c99700}
+.theme-red{--primary:#dc2626;--dark:#171717;--bg:#faf5f5;--card:#fff;--muted:#6b7280;--gold:#d4a72c}
+.theme-blue{--primary:#0f766e;--dark:#0f172a;--bg:#eff6ff;--card:#fff;--muted:#64748b;--gold:#d4a72c}
+.theme-purple{--primary:#7c3aed;--dark:#17112b;--bg:#f7f3ff;--card:#fff;--muted:#6b7280;--gold:#d4a72c}
+.theme-blackgold{--primary:#d4a72c;--dark:#f5f5f5;--bg:#090909;--card:#151515;--muted:#b8b8b8;--gold:#e5b93f}
+.theme-navygold{--primary:#d4a72c;--dark:#eef2ff;--bg:#0b1220;--card:#121c2f;--muted:#aab4c5;--gold:#e5b93f}
+.theme-redblack{--primary:#ef4444;--dark:#f5f5f5;--bg:#0d0d0d;--card:#171717;--muted:#b7b7b7;--gold:#d4a72c}
+.theme-rosewhite{--primary:#e11d62;--dark:#2b1721;--bg:#fff5f8;--card:#fff;--muted:#765d68;--gold:#d4a72c}
+body{transition:background .25s,color .25s}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}
+.theme-choice{border:2px solid #cbd5e1;background:var(--card);color:var(--dark);border-radius:12px;padding:12px;cursor:pointer;font-weight:700;text-align:left}
+.theme-choice.active{border-color:var(--primary);box-shadow:0 0 0 2px #00000012}
+.theme-dot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:7px;border:1px solid #777}
+.switch-view{margin-left:8px}
+.setting-note{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* Theme-safe UI */
+.card,.hero,.adminbar,.box{color:var(--dark)}
+.benefit{background:color-mix(in srgb,var(--primary) 7%,var(--card));color:var(--dark)}
+.theme-black .benefit,.theme-blackgold .benefit,.theme-navygold .benefit,.theme-redblack .benefit{
+  background:#202020;color:#f5f5f5
+}
+input,select,textarea{background:var(--card);color:var(--dark)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+.btn{background:var(--card);color:var(--dark)}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.dark{background:#111827;color:#fff}
+.theme-black .btn:not(.primary):not(.dark),.theme-blackgold .btn:not(.primary):not(.dark),
+.theme-navygold .btn:not(.primary):not(.dark),.theme-redblack .btn:not(.primary):not(.dark){
+  background:#242424;color:#fff
+}
+.theme-black .hero,.theme-black .card,.theme-black .adminbar,.theme-black .box,
+.theme-blackgold .hero,.theme-blackgold .card,.theme-blackgold .adminbar,.theme-blackgold .box,
+.theme-navygold .hero,.theme-navygold .card,.theme-navygold .adminbar,.theme-navygold .box,
+.theme-redblack .hero,.theme-redblack .card,.theme-redblack .adminbar,.theme-redblack .box{
+  border-color:#333
+}
+
+
+/* Animated realistic-style mini robot */
+.robot-toggle{
+  width:72px;height:72px;padding:0;background:transparent!important;
+  border:0;box-shadow:none;display:flex;align-items:center;justify-content:center
+}
+.robot-mini{position:relative;width:58px;height:62px;display:block;filter:drop-shadow(0 7px 10px #0006);animation:robotFloat 2.6s ease-in-out infinite}
+.robot-antenna{position:absolute;left:28px;top:0;width:3px;height:11px;background:#cbd5e1;border-radius:3px}
+.robot-antenna:after{content:"";position:absolute;left:-3px;top:-5px;width:9px;height:9px;border-radius:50%;background:#f43f8a;box-shadow:0 0 12px #f43f8a}
+.robot-head{position:absolute;left:7px;top:8px;width:44px;height:34px;border-radius:14px 14px 12px 12px;background:linear-gradient(145deg,#f8fafc,#94a3b8);border:2px solid #64748b;box-shadow:inset 0 -6px 10px #47556955,0 0 12px #f43f8a55}
+.robot-head:before{content:"";position:absolute;inset:5px;border-radius:9px;background:#111827;box-shadow:inset 0 0 8px #0ea5e9}
+.robot-head i{position:absolute;z-index:2;top:13px;width:7px;height:7px;border-radius:50%;background:#ff4d9d;box-shadow:0 0 8px #ff4d9d;animation:robotBlink 4s infinite}
+.robot-head i:first-child{left:13px}.robot-head i:last-child{right:13px}
+.robot-body{position:absolute;left:13px;top:41px;width:32px;height:20px;border-radius:10px 10px 8px 8px;background:linear-gradient(145deg,#f8fafc,#94a3b8);border:2px solid #64748b}
+.robot-body b{position:absolute;top:5px;width:5px;height:9px;border-radius:5px;background:#f43f8a}
+.robot-body b:first-child{left:-9px;transform:rotate(22deg);transform-origin:top;animation:robotArm 1.7s ease-in-out infinite}
+.robot-body b:last-child{right:-9px;transform:rotate(-22deg);transform-origin:top;animation:robotArm 1.7s ease-in-out infinite reverse}
+@keyframes robotFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(1deg)}}
+@keyframes robotBlink{0%,45%,50%,100%{transform:scaleY(1)}47%{transform:scaleY(.12)}}
+@keyframes robotArm{0%,100%{transform:rotate(22deg)}50%{transform:rotate(4deg)}}
+.speed-section{background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 10%,var(--card)),var(--card))}
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.faq-grid details{background:color-mix(in srgb,var(--primary) 5%,var(--card));border:1px solid color-mix(in srgb,var(--dark) 15%,transparent);border-radius:12px;padding:12px 14px}
+.faq-grid summary{cursor:pointer;font-weight:700;color:var(--dark)}
+.faq-grid p{margin:10px 0 0}
+
+
+#plans .card{border:1px solid color-mix(in srgb,var(--dark) 18%,transparent);transition:transform .2s,box-shadow .2s}
+#plans .card:hover{transform:translateY(-3px);box-shadow:0 14px 30px #0002}
+#plans .price{color:var(--primary)}
+.pro .benefit{background:color-mix(in srgb,var(--gold) 9%,var(--card))}
+
+
+/* Final contrast fix: primary action buttons must never become white-on-white. */
+.btn.primary,
+#plans .btn.primary,
+.pro .btn.primary,
+.speed-section .btn.primary {
+  background:var(--primary) !important;
+  color:#fff !important;
+  text-shadow:0 1px 1px #0003;
+}
+.theme-black .btn.primary,
+.theme-redblack .btn.primary {
+  background:#e11d48 !important;
+  color:#fff !important;
+}
+.theme-blackgold .btn.primary,
+.theme-navygold .btn.primary {
+  background:#d4a72c !important;
+  color:#111 !important;
+  text-shadow:none;
+}
+.theme-gold .btn.primary {
+  background:#b8860b !important;
+  color:#fff !important;
+}
+.theme-rosewhite .btn.primary {
+  background:#e11d62 !important;
+  color:#fff !important;
+}
+
+
+/* SONIC FIBER — Professional telecom design system */
+:root{
+  --primary:#e11d48;--dark:#0f172a;--card:#ffffff;--bg:#f4f6f8;
+  --muted:#64748b;--gold:#c89b3c;--line:#e2e8f0;
+  --radius:14px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:var(--bg);color:var(--dark);line-height:1.55;
+  letter-spacing:-.01em
+}
+header{
+  background:linear-gradient(110deg,#101827 0%,#241522 48%,#c91549 100%);
+  color:#fff;padding:15px clamp(20px,5vw,72px);display:flex;justify-content:space-between;
+  align-items:center;position:sticky;top:0;z-index:50;
+  box-shadow:0 4px 22px #0003;border-bottom:1px solid #ffffff1c
+}
+.brand{font-size:24px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.btn{
+  border:1px solid transparent;border-radius:9px;padding:11px 17px;font-weight:750;
+  cursor:pointer;transition:.18s ease;letter-spacing:.01em
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px #0002}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.dark{background:#111827;color:#fff}
+.btn.light{background:#fff;color:#172033;border-color:#fff}
+main{max-width:1180px;margin:auto;padding:34px 20px 55px}
+.hero{
+  position:relative;overflow:hidden;background:
+  radial-gradient(circle at 82% 25%,#e11d4830,transparent 31%),
+  linear-gradient(135deg,var(--card),color-mix(in srgb,var(--card) 86%,var(--primary)));
+  border:1px solid var(--line);border-radius:20px;padding:46px 42px;
+  box-shadow:0 18px 50px #0f172a12;margin-bottom:34px
+}
+.hero:after{
+  content:"";position:absolute;right:-110px;bottom:-130px;width:360px;height:360px;border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--primary) 28%,transparent);
+  box-shadow:0 0 0 32px color-mix(in srgb,var(--primary) 5%,transparent),
+             0 0 0 64px color-mix(in srgb,var(--primary) 3%,transparent);
+  pointer-events:none
+}
+.hero h1{font-size:clamp(36px,6vw,60px);line-height:1.04;margin:14px 0 13px;max-width:700px;letter-spacing:-.045em}
+.hero p{color:var(--muted);font-size:17px;max-width:650px;margin-bottom:25px}
+.badges{display:flex;gap:9px;flex-wrap:wrap}
+.badge{
+  background:color-mix(in srgb,var(--primary) 9%,var(--card));
+  color:var(--primary);padding:7px 11px;border-radius:7px;font-size:12px;
+  letter-spacing:.03em;text-transform:uppercase;border:1px solid color-mix(in srgb,var(--primary) 15%,transparent)
+}
+section{margin:38px 0}
+h2{font-size:25px;letter-spacing:-.025em;margin-bottom:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
+.card{
+  background:var(--card);padding:24px;border-radius:var(--radius);
+  border:1px solid var(--line);box-shadow:0 10px 28px #0f172a0b
+}
+#plans .card{position:relative;min-height:265px;padding:25px}
+#plans .card:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary);border-radius:14px 0 0 14px
+}
+#plans .card h3{font-size:19px;margin:0 0 18px}
+#plans .price{font-size:32px;letter-spacing:-.04em;color:var(--primary);margin-bottom:2px}
+#plans .muted{margin-top:10px;min-height:48px}
+#plans .btn{margin-top:10px;width:100%}
+.pro{border:1px solid var(--gold);box-shadow:0 12px 32px #c89b3c14}
+.pro:before{
+  content:"PRO";position:absolute;right:18px;top:18px;background:var(--gold);color:#fff;
+  padding:5px 9px;border-radius:6px;font-size:11px;font-weight:850;letter-spacing:.06em
+}
+.benefit{
+  padding:13px 15px;background:color-mix(in srgb,var(--primary) 5%,var(--card));
+  border:1px solid color-mix(in srgb,var(--dark) 9%,transparent);border-radius:9px;margin:9px 0
+}
+.speed-section{background:linear-gradient(120deg,color-mix(in srgb,var(--primary) 8%,var(--card)),var(--card))}
+.faq-grid details{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+  transition:.18s ease
+}
+.faq-grid details:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--line))}
+.faq-grid summary{cursor:pointer;font-weight:700;color:var(--dark)}
+footer{background:#0b1220;color:#aeb8c8;padding:42px 6%;text-align:left;margin-top:20px}
+footer b{color:#fff;letter-spacing:.08em}
+.modal{background:#02061799;backdrop-filter:blur(5px)}
+.box{border:1px solid var(--line);box-shadow:0 25px 70px #0005}
+input,select,textarea{
+  width:100%;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;
+  margin:6px 0 12px;font-size:15px;background:var(--card);color:var(--dark);outline:none
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent)
+}
+.adminbar{border:1px solid var(--line)}
+.theme-choice{border:1px solid var(--line);border-radius:9px}
+.chat-box{border:1px solid var(--line);box-shadow:0 18px 45px #0004}
+.chat-head{background:#111827}
+.chat-messages{background:var(--bg)}
+.chat-toggle{background:transparent!important}
+.robot-mini{filter:drop-shadow(0 8px 12px #0006)}
+@media(max-width:700px){
+  header{padding:13px 14px}
+  .brand{font-size:20px}
+  header .btn{padding:10px 12px}
+  main{padding:22px 14px 42px}
+  .hero{padding:30px 23px;border-radius:16px}
+  .hero h1{font-size:38px}
+  .grid{grid-template-columns:1fr}
+}
+
+<style>@media(max-width:700px){.trust-strip{grid-template-columns:1fr!important}}</style>
+</style>
+
+<style>
+.speed-section{overflow:hidden}
+.speed-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
+.speed-live-dot{width:10px;height:10px;border-radius:50%;background:#94a3b8;box-shadow:0 0 0 5px rgba(148,163,184,.14);margin-top:8px;flex:none}
+.speed-live-dot.live{background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.14);animation:speedPulse 1.2s infinite}
+.speed-meter{display:flex;justify-content:center;padding:18px 0 12px}
+.speed-ring{width:188px;height:188px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--primary) 0deg, var(--primary) 0deg, var(--line) 0deg 360deg);transition:background .35s ease;box-shadow:inset 0 0 0 1px var(--line),0 12px 35px rgba(15,23,42,.08)}
+.speed-ring-inner{width:154px;height:154px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid var(--line)}
+.speed-ring-inner strong{font-size:36px;line-height:1;font-weight:800;letter-spacing:-1px}
+.speed-ring-inner span{font-size:13px;color:var(--muted);margin-top:6px}
+.speed-ring-inner small{font-size:12px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+.speed-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 18px}
+.speed-stats>div{border:1px solid var(--line);border-radius:10px;padding:13px;text-align:center;background:color-mix(in srgb,var(--card) 92%,var(--primary) 8%)}
+.speed-stats span,.speed-stats small{display:block;color:var(--muted);font-size:12px}
+.speed-stats b{display:inline-block;font-size:23px;margin:4px 3px 0}
+.speed-start{width:100%;min-height:48px}
+.speed-note{text-align:center;margin-bottom:0}
+@keyframes speedPulse{50%{transform:scale(.82);opacity:.55}}
+@media(max-width:520px){.speed-ring{width:168px;height:168px}.speed-ring-inner{width:138px;height:138px}.speed-ring-inner strong{font-size:31px}.speed-stats b{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand" id="brand">SONIC FIBER</div>
+  <button class="btn light" id="roleButton" onclick="openRole()">Admin Login</button><button class="btn light switch-view" id="viewSwitch" onclick="switchView()">Customer View</button>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="badges"><span class="badge">⚡ High Speed</span><span class="badge">🎧 24/7 Support</span><span class="badge">🛡 Secure Network</span></div>
+    <h1 id="heroTitle">Fast. Reliable. <span style="color:var(--primary)">SONIC.</span></h1>
+    <p id="heroText">Premium fiber internet for homes and businesses. Experience fast speed with reliable support.</p>
+    <div class="row">
+      <button class="btn primary" onclick="scrollToPlans()">View Wi‑Fi Plans</button>
+      <button class="btn dark" onclick="buyPro()">Get PRO — Rs 399</button>
+      <button class="btn" type="button" onclick="startSonicSpeedTest()">Test My Speed</button>
+    </div>
+  </div>
+
+
+  <div class="trust-strip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:-14px 0 38px">
+    <div style="background:var(--card);padding:16px 18px"><b>Reliable Connection</b><br><span class="muted small">Built for everyday home use</span></div>
+    <div style="background:var(--card);padding:16px 18px"><b>24/7 Support</b><br><span class="muted small">Help when you need it</span></div>
+    <div style="background:var(--card);padding:16px 18px"><b>Secure Service</b><br><span class="muted small">Straightforward customer care</span></div>
+  </div>
+
+  <section>
+    <h2>Wi‑Fi Plans</h2>
+    <div id="plans" class="grid"></div>
+  </section>
+
+  <section id="proSection" class="card pro">
+    <h2>PRO Subscription — Rs <span id="proPrice">399</span></h2>
+    <p class="muted">Premium access managed by SONIC FIBER.</p>
+    <div id="benefits"></div>
+    <button class="btn primary" onclick="buyPro()">Buy PRO</button>
+  </section>
+
+
+  <section class="card speed-section" id="speedTestCard">
+    <div class="speed-head">
+      <div>
+        <h2 style="margin-bottom:4px">SONIC FIBER Speed Test</h2>
+        <p class="muted" style="margin-top:0">Real network measurement — Download, Upload and Ping.</p>
+      </div>
+      <span class="speed-live-dot" id="speedLiveDot"></span>
+    </div>
+    <div class="speed-meter">
+      <div class="speed-ring" id="speedRing">
+        <div class="speed-ring-inner">
+          <strong id="speedMain">—</strong>
+          <span id="speedUnit">Mbps</span>
+          <small id="speedPhase">Ready</small>
+        </div>
+      </div>
+    </div>
+    <div class="speed-stats">
+      <div><span>Download</span><b id="speedDown">—</b><small>Mbps</small></div>
+      <div><span>Upload</span><b id="speedUp">—</b><small>Mbps</small></div>
+      <div><span>Ping</span><b id="speedPing">—</b><small>ms</small></div>
+    </div>
+    <button class="btn primary speed-start" type="button" id="speedStartBtn" onclick="startSonicSpeedTest()">Start Speed Test</button>
+    <p class="small muted speed-note">Powered by Cloudflare's browser speed-test engine. Results are measured from your device over the live Internet connection; they are not simulated.</p>
+  </section>
+
+  <section class="card faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-grid">
+      <details><summary>What is the installation charge?</summary><p class="muted">Contact SONIC FIBER customer service for the current installation details.</p></details>
+      <details><summary>How can I pay my bill?</summary><p class="muted">Use the payment instructions provided by SONIC FIBER customer support.</p></details>
+      <details><summary>Is there any data limit?</summary><p class="muted">Ask customer support about the data policy for your selected plan.</p></details>
+      <details><summary>Do you provide support on holidays?</summary><p class="muted">Customer support availability can be confirmed through the contact details below.</p></details>
+      <details><summary>Can I upgrade or downgrade my plan?</summary><p class="muted">Contact SONIC FIBER to request a plan change.</p></details>
+      <details><summary>What if I face connectivity issues?</summary><p class="muted">Contact customer service and describe the issue so the team can help.</p></details>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Customer Service</h2>
+    <p>Customer Service: <a id="phoneLink" href="tel:03005115469">03005115469</a></p>
+    <p>WhatsApp: <a id="waLink" target="_blank" href="https://wa.me/923005115469">03005115469</a></p>
+    <p>Email: <a id="emailLink" href="mailto:sattiop3@gmail.com">sattiop3@gmail.com</a></p>
+  </section>
+
+  <section id="adminSection" class="hidden">
+    <div class="adminbar">
+      <h2>Admin Dashboard</h2>
+      <p class="muted">Owner controls: plans, prices, branding, PRO benefits and orders.</p>
+      <div id="adminStats" class="grid"></div>
+    </div>
+    <div class="card">
+      <h3>Website settings</h3>
+<div class="card" style="margin-top:16px">
+  <h3>Website Settings</h3>
+  <p class="setting-note">Admin can control the website appearance and customer experience. Customers can also choose their own interface theme; their choice is saved on their device.</p>
+  <div class="settings-grid" id="themeChoices"></div>
+  <div class="row" style="margin-top:16px">
+    <div><label>Customer service number</label><input id="setPhone"></div>
+    <div><label>Customer service email</label><input id="setEmail"></div>
+  </div>
+  <div class="row">
+    <div><label>Show PRO section</label><select id="setProVisible"><option value="yes">Yes</option><option value="no">No</option></select></div>
+    <div><label>Show customer chatbot</label><select id="setChatVisible"><option value="yes">Yes</option><option value="no">No</option></select></div>
+  </div>
+  <button class="btn primary" onclick="saveAdvancedSettings()">Save settings</button>
+  <button class="btn" onclick="resetMyTheme()">Reset my theme</button>
+</div>
+
+      <div class="row"><div><label>Website name</label><input id="setName"></div><div><label>Hero title</label><input id="setTitle"></div></div>
+      <label>Hero text</label><textarea id="setText"></textarea>
+      <div class="row"><div><label>PRO price (Rs)</label><input id="setPro" type="number"></div><div><label>PRO discount (%)</label><input id="setDiscount" type="number"></div></div>
+      <button class="btn primary" onclick="saveSettings()">Save settings</button>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Add Wi‑Fi plan</h3>
+      <div class="row"><input id="newName" placeholder="Plan name"><input id="newSpeed" placeholder="Speed e.g. 20 Mbps"><input id="newPrice" type="number" placeholder="Price"></div>
+      <input id="newDesc" placeholder="Short description">
+      <button class="btn primary" onclick="addPlan()">Add plan</button>
+    </div>
+    <div class="card" style="margin-top:16px"><h3>Existing plans</h3><div id="adminPlans"></div></div>
+    <div class="card" style="margin-top:16px"><h3>PRO benefits</h3><div id="adminBenefits"></div><button class="btn primary" onclick="addBenefit()">Add benefit</button></div>
+    <div class="card" style="margin-top:16px"><h3>Orders / notifications</h3><div id="orders"></div></div>
+    <div class="card" style="margin-top:16px"><h3>Grant / revoke PRO</h3><input id="grantPhone" placeholder="Customer WhatsApp/phone"><div class="row"><button class="btn primary" onclick="grantPro()">Grant PRO</button><button class="btn danger" onclick="revokePro()">Revoke PRO</button></div></div>
+  </section>
+</main>
+
+<div id="chatbot">
+  <button id="chatToggle" class="chat-toggle robot-toggle" onclick="toggleChat()" aria-label="Open SONIC FIBER AI Help">
+    <span class="robot-mini">
+      <span class="robot-antenna"></span>
+      <span class="robot-head"><i></i><i></i></span>
+      <span class="robot-body"><b></b><b></b></span>
+    </span>
+  </button>
+  <div id="chatBox" class="chat-box hidden">
+    <div class="chat-head"><b>SONIC FIBER AI Help</b><button onclick="toggleChat()">×</button></div>
+    <div id="chatMessages" class="chat-messages">
+      <div class="bot-msg">Hi! I can help with Wi‑Fi plans, PRO, payments and customer support.</div>
+    </div>
+    <div class="chat-quick">
+      <button onclick="chatAsk('plans')">Plans</button>
+      <button onclick="chatAsk('pro')">PRO</button>
+      <button onclick="chatAsk('payment')">Payment</button>
+      <button onclick="chatAsk('support')">Support</button>
+    </div>
+    <div class="chat-input"><input id="chatInput" placeholder="Ask something..." onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">Send</button></div>
+  </div>
+</div>
+
+<footer>
+  <b id="footerBrand">SONIC FIBER</b><br><span class="small">Customer Service: 03005115469 • sattiop3@gmail.com</span>
+</footer>
+
+<div class="modal" id="roleModal"><div class="box">
+<h2>Welcome</h2><p>Choose how you want to enter.</p>
+<div class="row"><button class="btn primary" onclick="customerMode()">Customer</button><button class="btn dark" onclick="adminForm()">Admin</button></div>
+<div id="loginForm" class="hidden" style="margin-top:18px"><label>Username</label><input id="username"><label>Password</label><input id="password" type="password"><button class="btn primary" onclick="login()">Login</button></div>
+<button class="btn" style="margin-top:12px" onclick="closeRole()">Cancel</button>
+</div></div>
+
+<script type="module">
+import SpeedTest from "https://unpkg.com/@cloudflare/speedtest@1.13.1/dist/speedtest.js";
+
+let sonicSpeedEngine=null;
+let sonicSpeedTimer=null;
+let sonicSpeedPhase="Ready";
+
+function setSpeedPhase(text){
+  sonicSpeedPhase=text;
+  const el=document.getElementById("speedPhase");
+  if(el) el.textContent=text;
+}
+function setSpeedNumber(id,value){
+  const el=document.getElementById(id);
+  if(el && Number.isFinite(value)) el.textContent=value.toFixed(value>=100?0:1);
+}
+function setSpeedRing(value){
+  const ring=document.getElementById("speedRing");
+  if(!ring || !Number.isFinite(value)) return;
+  const deg=Math.max(0,Math.min(360,(value/1000)*360));
+  ring.style.background=`conic-gradient(var(--primary) 0deg, var(--primary) ${deg}deg, var(--line) ${deg}deg 360deg)`;
+}
+function updateSpeedFromResults(results){
+  try{
+    const down=Number(results.getDownloadBandwidth())/1e6;
+    const up=Number(results.getUploadBandwidth())/1e6;
+    const ping=Number(results.getUnloadedLatency());
+    if(Number.isFinite(down)) setSpeedNumber("speedDown",down);
+    if(Number.isFinite(up)) setSpeedNumber("speedUp",up);
+    if(Number.isFinite(ping)) setSpeedNumber("speedPing",ping);
+    const main=sonicSpeedPhase.toLowerCase().includes("upload")?up:down;
+    if(Number.isFinite(main)){setSpeedNumber("speedMain",main);setSpeedRing(main);}
+  }catch(e){}
+}
+window.startSonicSpeedTest=async function(){
+  const btn=document.getElementById("speedStartBtn");
+  const dot=document.getElementById("speedLiveDot");
+  if(sonicSpeedEngine && sonicSpeedEngine.isRunning) return;
+  btn.disabled=true; btn.textContent="Testing…"; dot.classList.add("live");
+  document.getElementById("speedDown").textContent="—";
+  document.getElementById("speedUp").textContent="—";
+  document.getElementById("speedPing").textContent="—";
+  document.getElementById("speedMain").textContent="—";
+  document.getElementById("speedRing").style.background="conic-gradient(var(--primary) 0deg, var(--line) 0deg 360deg)";
+  try{
+    setSpeedPhase("Connecting");
+    sonicSpeedEngine=new SpeedTest({
+      autoStart:false,
+      measurements:[
+        {type:"latency",numPackets:5},
+        {type:"download",bytes:1e6,count:4},
+        {type:"download",bytes:1e7,count:2},
+        {type:"upload",bytes:1e6,count:4},
+        {type:"upload",bytes:1e7,count:2}
+      ],
+      measureDownloadLoadedLatency:true,
+      measureUploadLoadedLatency:true
+    });
+    sonicSpeedEngine.onRunningChange=(running)=>{
+      if(running) dot.classList.add("live");
+    };
+    sonicSpeedEngine.onResultsChange=(info)=>{
+      const t=String(info?.type||"").toLowerCase();
+      if(t.includes("latency")) setSpeedPhase("Checking ping");
+      else if(t.includes("download")){setSpeedPhase("Testing download");}
+      else if(t.includes("upload")){setSpeedPhase("Testing upload");}
+      updateSpeedFromResults(sonicSpeedEngine.results);
+    };
+    sonicSpeedEngine.onError=(err)=>{
+      console.error("SONIC speed test error",err);
+      setSpeedPhase("Test unavailable");
+      btn.disabled=false; btn.textContent="Try Again"; dot.classList.remove("live");
+      alert("Speed test could not connect. Please check your Internet connection and try again.");
+    };
+    sonicSpeedEngine.onFinish=(results)=>{
+      clearInterval(sonicSpeedTimer);
+      updateSpeedFromResults(results);
+      const down=Number(results.getDownloadBandwidth())/1e6;
+      setSpeedNumber("speedMain",down);
+      if(Number.isFinite(down)) setSpeedRing(down);
+      setSpeedPhase("Complete");
+      btn.disabled=false; btn.textContent="Test Again"; dot.classList.remove("live");
+    };
+    sonicSpeedEngine.play();
+    sonicSpeedTimer=setInterval(()=>{
+      if(sonicSpeedEngine && sonicSpeedEngine.isRunning) updateSpeedFromResults(sonicSpeedEngine.results);
+    },350);
+  }catch(err){
+    console.error(err);
+    clearInterval(sonicSpeedTimer);
+    setSpeedPhase("Could not start");
+    btn.disabled=false; btn.textContent="Try Again"; dot.classList.remove("live");
+    alert("The built-in speed test could not load. Please make sure the APK/WebView allows secure Internet access.");
+  }
+};
+</script>
+<script>
+const ADMIN_USER="SONICFIBER", ADMIN_PASS="1234";
+const WA="923005115469", EASYPAISA="https://easypaisa.com.pk/";
+const KEY="sonicFiberData";
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
+ name:"SONIC FIBER",title:"Reliable Fiber Internet for your home",text:"Choose a plan, contact support, or upgrade to PRO.",
+ pro:399,discount:0,
+ benefits:["Priority customer support","Special subscriber discounts","Early access to new offers","PRO subscriber status"],
+ plans:[
+  {name:"Basic 10",speed:"10 Mbps",price:999,desc:"Great for light browsing and study."},
+  {name:"Home 20",speed:"20 Mbps",price:1299,desc:"Balanced speed for a family."},
+  {name:"Turbo 30",speed:"30 Mbps",price:1599,desc:"Smooth streaming and multiple devices."},
+  {name:"Ultra 50",speed:"50 Mbps",price:2199,desc:"High-speed home connectivity."}
+ ],
+ orders:[],proUsers:[],settings:{theme:"white",phone:"03005115469",email:"sattiop3@gmail.com",proVisible:true,chatVisible:true}
+};
+data.settings=Object.assign({theme:"white",phone:"03005115469",email:"sattiop3@gmail.com",proVisible:true,chatVisible:true},data.settings||{});
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));}
+function money(n){return "Rs "+Number(n).toLocaleString("en-PK")}
+
+const THEMES=[
+ ["white","White"],["black","Black"],["gold","Golden"],["red","Red"],["blue","Blue"],
+ ["purple","Purple"],["blackgold","Black + Gold"],["navygold","Navy + Gold"],["redblack","Red + Black"],["rosewhite","Rose White"]
+];
+function applyTheme(theme,save=true){
+ document.body.className=(document.body.className||"").replace(/\btheme-\S+/g,"").trim()+" theme-"+theme;
+ if(save){localStorage.setItem("sonicFiberTheme",theme)}
+ document.querySelectorAll(".theme-choice").forEach(b=>b.classList.toggle("active",b.dataset.theme===theme));
+}
+function renderThemes(){
+ if(!document.getElementById("themeChoices"))return;
+ themeChoices.innerHTML=THEMES.map(t=>`<button class="theme-choice ${((localStorage.getItem("sonicFiberTheme")||data.settings.theme)===t[0])?"active":""}" data-theme="${t[0]}" onclick="chooseTheme('${t[0]}')"><span class="theme-dot"></span>${t[1]}</button>`).join("");
+}
+function chooseTheme(theme){applyTheme(theme,true);renderThemes()}
+function resetMyTheme(){applyTheme("white",true);renderThemes()}
+function saveAdvancedSettings(){
+ data.settings.phone=setPhone.value.trim()||"03005115469";
+ data.settings.email=setEmail.value.trim()||"sattiop3@gmail.com";
+ data.settings.proVisible=setProVisible.value==="yes";
+ data.settings.chatVisible=setChatVisible.value==="yes";
+ data.settings.theme=localStorage.getItem("sonicFiberTheme")||data.settings.theme;
+ persist();render();alert("Settings saved.");
+}
+function switchView(){
+ if(sessionStorage.getItem("admin")==="1"){
+   const hidden=adminSection.classList.toggle("hidden");
+   viewSwitch.textContent=hidden?"Admin Dashboard":"Customer View";
+   window.scrollTo({top:0,behavior:"smooth"});
+ }else{
+   // Customer can never enter admin mode from this button.
+   window.scrollTo({top:0,behavior:"smooth"});
+   alert("Customer View is already active.");
+ }
+}
+
+function render(){
+ document.title=data.name; brand.textContent=data.name;phoneLink.textContent=data.settings?.phone||"03005115469";phoneLink.href="tel:"+(data.settings?.phone||"03005115469");waLink.textContent=data.settings?.phone||"03005115469";waLink.href="https://wa.me/"+(data.settings?.phone||"03005115469").replace(/\D/g,"").replace(/^0/,"92");emailLink.textContent=data.settings?.email||"sattiop3@gmail.com";emailLink.href="mailto:"+(data.settings?.email||"sattiop3@gmail.com"); footerBrand.textContent=data.name;
+ heroTitle.textContent=data.title; heroText.textContent=data.text; proPrice.textContent=data.pro;
+ plans.innerHTML=data.plans.map((p,i)=>`<div class="card"><h3>${esc(p.name)}</h3><div class="price">${money(p.price)}</div><b>${esc(p.speed)}</b><p class="muted">${esc(p.desc)}</p><button class="btn primary" onclick="buyPlan(${i})">Buy this plan</button></div>`).join("");
+ benefits.innerHTML=data.benefits.map(x=>`<div class="benefit">✓ ${esc(x)}</div>`).join("");
+ adminStats.innerHTML=`<div class="card"><b>${data.plans.length}</b><br><span class="muted">Plans</span></div><div class="card"><b>${data.orders.length}</b><br><span class="muted">Orders</span></div><div class="card"><b>${data.proUsers.length}</b><br><span class="muted">PRO users</span></div>`;
+ setName.value=data.name;setTitle.value=data.title;setText.value=data.text;setPro.value=data.pro;setDiscount.value=data.discount;setPhone.value=data.settings?.phone||"03005115469";setEmail.value=data.settings?.email||"sattiop3@gmail.com";setProVisible.value=(data.settings?.proVisible!==false)?"yes":"no";setChatVisible.value=(data.settings?.chatVisible!==false)?"yes":"no";renderThemes();
+ adminPlans.innerHTML=data.plans.map((p,i)=>`<div class="benefit"><b>${esc(p.name)}</b> — ${esc(p.speed)} — ${money(p.price)}<div class="plan-actions"><button class="btn" onclick="editPlan(${i})">Edit</button><button class="btn danger" onclick="deletePlan(${i})">Delete</button></div></div>`).join("");
+ adminBenefits.innerHTML=data.benefits.map((b,i)=>`<div class="benefit">${esc(b)} <button class="btn danger" onclick="deleteBenefit(${i})">Delete</button></div>`).join("");
+ document.getElementById("proSection").classList.toggle("hidden", data.settings?.proVisible===false);document.getElementById("chatbot").classList.toggle("hidden", data.settings?.chatVisible===false);orders.innerHTML=data.orders.length?data.orders.slice().reverse().map(o=>`<div class="benefit"><b>${esc(o.type)}</b> — ${esc(o.plan||"PRO")}<br>Time: ${esc(o.time)}<br>Status: ${esc(o.status)}<br><button class="btn" onclick="markDone(${o.id})">Mark handled</button></div>`).join(""):"<p class='muted'>No orders yet.</p>";
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function scrollToPlans(){document.getElementById("plans").scrollIntoView({behavior:"smooth"})}
+function openRole(){roleModal.classList.add("show")}
+function closeRole(){roleModal.classList.remove("show");loginForm.classList.add("hidden")}
+function customerMode(){closeRole();sessionStorage.setItem("mode","customer");sessionStorage.removeItem("admin");adminSection.classList.add("hidden")}
+function adminForm(){loginForm.classList.remove("hidden")}
+function login(){if(username.value===ADMIN_USER&&password.value===ADMIN_PASS){sessionStorage.setItem("admin","1");closeRole();adminSection.classList.remove("hidden");render()}else alert("Invalid admin username or password.")}
+function buyPlan(i){
+ const p=data.plans[i]; const id=Date.now();
+ data.orders.push({id,type:"Wi‑Fi Plan",plan:p.name,phone:"",time:new Date().toLocaleString(),status:"New"});
+ persist();render();
+ const msg=encodeURIComponent(`SONIC FIBER Wi‑Fi order: ${p.name} (${p.speed}) - ${money(p.price)}. Please contact me to confirm my order.`);
+ window.open(`https://wa.me/${WA}?text=${msg}`,"_blank");
+}
+function buyPro(){
+ const id=Date.now();
+ data.orders.push({id,type:"PRO Subscription",plan:"PRO",phone:"",time:new Date().toLocaleString(),status:"New"});
+ persist();render();
+ const msg=encodeURIComponent(`SONIC FIBER PRO subscription request - ${money(data.pro)}. Please confirm payment and activation.`);
+ window.open(EASYPAISA,"_blank");
+ setTimeout(()=>window.open(`https://wa.me/${WA}?text=${msg}`,"_blank"),500);
+}
+function saveSettings(){data.name=setName.value||data.name;data.title=setTitle.value||data.title;data.text=setText.value;data.pro=Number(setPro.value)||399;data.discount=Number(setDiscount.value)||0;persist();render();alert("Settings saved.")}
+function addPlan(){let n=newName.value.trim(),s=newSpeed.value.trim(),p=Number(newPrice.value),d=newDesc.value.trim();if(!n||!s||!p)return alert("Enter plan name, speed and price.");data.plans.push({name:n,speed:s,price:p,desc:d});persist();render();newName.value=newSpeed.value=newPrice.value=newDesc.value=""}
+function editPlan(i){let p=data.plans[i];let n=prompt("Plan name",p.name);if(n===null)return;let s=prompt("Speed",p.speed);let pr=prompt("Price",p.price);let d=prompt("Description",p.desc);if(n&&s&&pr){data.plans[i]={name:n,speed:s,price:Number(pr),desc:d||""};persist();render()}}
+function deletePlan(i){if(confirm("Delete this plan?")){data.plans.splice(i,1);persist();render()}}
+function addBenefit(){let b=prompt("New PRO benefit");if(b){data.benefits.push(b);persist();render()}}
+function deleteBenefit(i){data.benefits.splice(i,1);persist();render()}
+function markDone(id){let o=data.orders.find(x=>x.id===id);if(o)o.status="Handled";persist();render()}
+function grantPro(){let p=grantPhone.value.trim();if(!p)return alert("Enter customer phone.");if(!data.proUsers.includes(p))data.proUsers.push(p);persist();render();alert("PRO granted to "+p)}
+function revokePro(){let p=grantPhone.value.trim();data.proUsers=data.proUsers.filter(x=>x!==p);persist();render();alert("PRO revoked if the customer existed.")}
+
+
+function openOokla(){ startSonicSpeedTest(); }
+function toggleChat(){chatBox.classList.toggle("hidden")}
+function addChat(text,who){chatMessages.insertAdjacentHTML("beforeend",`<div class="${who}-msg">${esc(text)}</div>`);chatMessages.scrollTop=chatMessages.scrollHeight}
+function chatAsk(type){
+ const answers={
+  plans:`We have ${data.plans.length} Wi‑Fi plans. Prices start from ${money(Math.min(...data.plans.map(p=>p.price)))}. Tap “View Wi‑Fi Plans” to choose one.`,
+  pro:`PRO costs ${money(data.pro)}. Benefits: ${data.benefits.join(", ")}. Tap “Buy PRO” to apply.`,
+  payment:`For PRO, the website redirects you to EasyPaisa and then to WhatsApp ${"03005115469"} for confirmation. For a Wi‑Fi plan, the Buy button opens WhatsApp.`,
+  support:`Customer service: 03005115469. WhatsApp: 03005115469. Email: sattiop3@gmail.com.`
+ };
+ addChat(type==="plans"?"Plans":type==="pro"?"PRO":type==="payment"?"Payment":"Support","user");
+ addChat(answers[type],"bot");
+}
+function sendChat(){
+ const q=chatInput.value.trim();if(!q)return;
+ addChat(q,"user");chatInput.value="";
+ const x=q.toLowerCase();let answer;
+ if(x.includes("plan")||x.includes("wifi")||x.includes("speed")) answer=`We have ${data.plans.length} Wi‑Fi plans. Open the Wi‑Fi Plans section to compare prices and speeds.`;
+ else if(x.includes("pro")||x.includes("subscription")) answer=`PRO is ${money(data.pro)}. It includes ${data.benefits.slice(0,4).join(", ")}.`;
+ else if(x.includes("pay")||x.includes("easypaisa")) answer=`For PRO payment, tap Buy PRO. You will be redirected to EasyPaisa and then WhatsApp ${"03005115469"} for confirmation.`;
+ else if(x.includes("contact")||x.includes("support")||x.includes("whatsapp")) answer=`Customer service is available on WhatsApp ${"03005115469"} or email sattiop3@gmail.com.`;
+ else answer=`I can help with Wi‑Fi plans, PRO subscription, payment and customer support. Try asking “plans”, “PRO”, “payment” or “support”.`;
+ setTimeout(()=>addChat(answer,"bot"),200);
+}
+
+if(sessionStorage.getItem("admin")==="1"){adminSection.classList.remove("hidden");roleButton.textContent="Admin Dashboard";}else{adminSection.classList.add("hidden");roleButton.textContent="Admin Login";}
+applyTheme(localStorage.getItem("sonicFiberTheme")||data.settings.theme||"white",false);render();
+setTimeout(()=>{if(!sessionStorage.getItem("mode")&&!sessionStorage.getItem("admin"))openRole()},300);
+</script>
+</body>
+</html>
